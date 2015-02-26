@@ -3,6 +3,7 @@ var _ = require('underscore');
 var queue = require('queue-async');
 var jsyaml = require('js-yaml');
 var patch = require('../../vendor/liquid.patch');
+require('json-editor'); // Ew, it sets window.JSONEditor
 
 var ModalView = require('./modal');
 var marked = require('marked');
@@ -306,6 +307,56 @@ module.exports = Backbone.View.extend({
     return _.escape(content);
   },
 
+  initJsonEditor: function() {
+    var schemafile = this.model.get('name');
+    var metadata = this.model.get('metadata');
+    if (metadata && metadata.schema) {
+      schemafile = metadata.schema;
+    }
+
+    var schema = this.collection.findWhere({ path: '_schema/' + schemafile });
+    if (schema) {
+      schema.fetch({
+        success: (function(schemaModel, res, options) {
+          // We win! Build the form controller!
+          var element = this.$el.find('#formeditor')[0];
+          var fe = new JSONEditor(element, {
+            schema: JSON.parse(schemaModel.get('content')),
+            disable_edit_json: true,
+            disable_properties: true,
+            iconlib: 'foundation3',
+            startval: JSON.parse(this.model.get('content'))
+          });
+          this.handlingEditorUpdate = true;
+          this.listenTo(fe, 'change', this.formUpdated, this);
+          this.formeditor = fe;
+        }).bind(this)
+      });
+    }
+  },
+
+  formUpdated: function() {
+    console.log("formUpdated, handlingEditorUpdate: ", this.handlingEditorUpdate, " handlingFormUpdate: ", this.handlingFormUpdate);
+    if (this.handlingEditorUpdate) {
+      this.handlingEditorUpdate = false;
+    } else {
+      this.handlingFormUpdate = true;
+      var json = JSON.stringify(this.formeditor.getValue(), null, 2);
+      this.editor.setValue(json);
+    }
+  },
+
+  editorUpdated: function(e) {
+    console.log("editorUpdated, handlingEditorUpdate: ", this.handlingEditorUpdate, " handlingFormUpdate: ", this.handlingFormUpdate);
+    if (this.handlingFormUpdate) {
+      this.handlingFormUpdate = false;
+    } else {
+      this.handlingEditorUpdate = true;
+      this.formeditor.setValue(JSON.parse(e.getValue()));
+    }
+    this.makeDirty(e);
+  },
+
   initEditor: function() {
     var lang = this.model.get('lang');
 
@@ -344,7 +395,7 @@ module.exports = Backbone.View.extend({
       this.listenTo(this.editor, 'cursorActivity', this.cursor);
     }
 
-    this.listenTo(this.editor, 'change', this.makeDirty, this);
+    this.listenTo(this.editor, 'change', this.editorUpdated, this);
     this.listenTo(this.editor, 'focus', this.focus, this);
 
     this.refreshCodeMirror();
@@ -521,6 +572,7 @@ module.exports = Backbone.View.extend({
 
       // initialize the subviews
       this.initEditor();
+      this.initJsonEditor();
       this.initHeader();
       this.initToolbar();
       this.initSidebar();
@@ -828,8 +880,6 @@ module.exports = Backbone.View.extend({
   },
 
   makeDirty: function(e) {
-    this.dirty = true;
-
     // Update Content.
     if (this.editor && this.editor.getValue) {
       this.model.set('content', this.editor.getValue());

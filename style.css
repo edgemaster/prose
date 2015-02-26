@@ -2745,3 +2745,31 @@ only screen and (min-device-pixel-ratio:2) {
     background-size:55px 55px;
     }
 }
+
+.formeditor * {
+  vertical-align: middle;
+}
+
+.formeditor button {
+  margin: 3px;
+  padding: 2px 7px;
+}
+
+.formeditor table table thead {
+  display: none;
+}
+
+.json-editor-btn-add,
+.json-editor-btn-delete {
+  display: inline;
+  width: auto;
+}
+
+.formeditor .delete {
+  display: block;
+  width: 100%;
+}
+
+.formeditor tr:nth-child(even) {
+  background: #f0f0f0;
+}
