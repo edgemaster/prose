@@ -1,0 +1,6 @@
+{
+  "api": "https://api.github.com",
+  "site": "https://github.com",
+  "clientId": "66391ceee00102750459",
+  "gatekeeperUrl": "https://rr-authproxy.herokuapp.com"
+}
