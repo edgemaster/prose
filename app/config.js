@@ -8,5 +8,7 @@ module.exports = {
   id: oauth.clientId,
   url: oauth.gatekeeperUrl,
   username: cookie.get('username'),
-  auth: 'oauth'
+  auth: 'oauth',
+  defaultOrg: 'resource-reasoning',
+  defaultRepo: 'resourcereasoning.com'
 };

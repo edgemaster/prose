@@ -336,7 +336,15 @@ module.exports = Backbone.Router.extend({
 
     // If user has authenticated
     if (this.user) {
-      router.navigate(this.user.get('login'), {
+      var path = this.user.get('login');
+      if (auth.defaultOrg) {
+        path = auth.defaultOrg;
+      }
+      if (auth.defaultRepo) {
+        path += "/" + auth.defaultRepo;
+      }
+
+      router.navigate(path, {
         trigger: true,
         replace: true
       });
