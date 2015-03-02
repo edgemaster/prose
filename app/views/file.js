@@ -336,7 +336,6 @@ module.exports = Backbone.View.extend({
   },
 
   formUpdated: function() {
-    console.log("formUpdated, handlingEditorUpdate: ", this.handlingEditorUpdate, " handlingFormUpdate: ", this.handlingFormUpdate);
     if (this.handlingEditorUpdate) {
       this.handlingEditorUpdate = false;
     } else {
@@ -347,12 +346,13 @@ module.exports = Backbone.View.extend({
   },
 
   editorUpdated: function(e) {
-    console.log("editorUpdated, handlingEditorUpdate: ", this.handlingEditorUpdate, " handlingFormUpdate: ", this.handlingFormUpdate);
     if (this.handlingFormUpdate) {
       this.handlingFormUpdate = false;
     } else {
       this.handlingEditorUpdate = true;
-      this.formeditor.setValue(JSON.parse(e.getValue()));
+      if (this.formeditor) {
+        this.formeditor.setValue(JSON.parse(e.getValue()));
+      }
     }
     this.makeDirty(e);
   },
