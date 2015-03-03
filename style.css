@@ -262,6 +262,8 @@ fieldset {
   }
 select,
 textarea,
+input[type=date],
+input[type=url],
 input[type=text] {
   font-size:13px;
   line-height:18px;
@@ -272,6 +274,8 @@ input[type=text] {
           border-radius:2px;
   }
 textarea,
+input[type=date],
+input[type=url],
 input[type=text] {
   background-color:#fff;
   vertical-align:middle;
@@ -2746,6 +2750,8 @@ only screen and (min-device-pixel-ratio:2) {
     }
 }
 
+/* Formeditor ------------------------------*/
+
 .formeditor * {
   vertical-align: middle;
 }
@@ -2772,4 +2778,22 @@ only screen and (min-device-pixel-ratio:2) {
 
 .formeditor tr:nth-child(even) {
   background: #f0f0f0;
+}
+
+.formeditor .tabs {
+  height: 800px;
+  overflow: auto;
+  width: 180px !important;
+}
+
+.formeditor .tabs div {
+  cursor: pointer;
+}
+
+.formeditor .tabs div:nth-child(even) {
+  background: #d0d0d0;
+}
+
+.formeditor .tabs + .content {
+  margin-left: 180px !important;
 }
